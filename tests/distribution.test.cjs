@@ -52,5 +52,7 @@ for (const filename of ['lib/vanilla-masker.js', 'build/vanilla-masker.min.js'])
 }
 test('upstream gzip artifact contains the exact current minified build', () => {
   const built = name => fs.readFileSync(path.join(__dirname, '..', name));
-  assert.deepEqual(gunzipSync(built('build/vanilla-masker.min.js.gz')), built('dist/vmask.min.js'));
+  const compressed = built('build/vanilla-masker.min.js.gz');
+  assert.equal(compressed[9], 255, 'gzip metadata must not depend on the build operating system');
+  assert.deepEqual(gunzipSync(compressed), built('dist/vmask.min.js'));
 });

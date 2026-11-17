@@ -35,5 +35,8 @@ fs.mkdirSync(path.join(root, 'build'), { recursive: true });
 fs.copyFileSync(path.join(root, 'dist', 'vmask.js'), path.join(root, 'lib', 'vanilla-masker.js'));
 const minified = fs.readFileSync(path.join(root, 'dist', 'vmask.min.js'));
 fs.writeFileSync(path.join(root, 'build', 'vanilla-masker.min.js'), minified);
-fs.writeFileSync(path.join(root, 'build', 'vanilla-masker.min.js.gz'), gzipSync(minified, { level: 9 }));
+const compressed = gzipSync(minified, { level: 9 });
+// RFC 1952 permits OS=255 (unknown), making this metadata identical on Windows/Linux.
+compressed[9] = 255;
+fs.writeFileSync(path.join(root, 'build', 'vanilla-masker.min.js.gz'), compressed);
 console.log(`Built VMasker Refined ${version}: UMD, minified UMD, CommonJS, ESM and legacy distribution paths.`);
