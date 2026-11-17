@@ -1,42 +1,36 @@
 {
-  "name": "vanilla-masker",
-  "version": "1.2.0",
-  "description": "VanillaMasker is a pure javascript input mask.",
-  "main": "lib/vanilla-masker.js",
-  "scripts": {
-    "start": "grunt dev",
-    "build": "grunt build",
-    "test": "grunt test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/vanilla-masker/vanilla-masker.git"
-  },
-  "keywords": [
-    "mask input",
-    "javascript",
-    "lightweight",
-    "cross-browser",
-    "cross-device"
-  ],
-  "author": [
-    "Caio Ribeiro Pereira <caio.ribeiro.pereira@gmail.com>",
-    "Leandro Alvares da Costa <leandroadacosta@gmail.com>"
-  ],
+  "name": "vmask-refined",
+  "version": "2.0.0",
+  "private": true,
+  "description": "VanillaMasker fork with modern input handling, tested formatters and UMD/CommonJS/ESM builds.",
+  "repository": { "type": "git", "url": "https://github.com/wellington043/vanilla-masker.git" },
+  "homepage": "https://github.com/wellington043/vanilla-masker#readme",
+  "bugs": { "url": "https://github.com/wellington043/vanilla-masker/issues" },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/vanilla-masker/vanilla-masker/issues"
+  "main": "dist/vmask.cjs",
+  "module": "dist/vmask.mjs",
+  "browser": "dist/vmask.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vmask.mjs",
+      "require": "./dist/vmask.cjs"
+    },
+    "./lib/vanilla-masker.js": "./lib/vanilla-masker.js",
+    "./build/vanilla-masker.min.js": "./build/vanilla-masker.min.js",
+    "./dist/*": "./dist/*"
   },
-  "homepage": "https://vanilla-masker.github.io/vanilla-masker/",
+  "files": ["dist", "lib", "build", "src", "README.md", "CHANGELOG.md", "LICENSE"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "test": "npm run build && node --test tests/*.test.cjs",
+    "test:browser": "npm run build && node tests/browser.cjs",
+    "check": "npm test && npm run test:browser",
+    "benchmark": "node scripts/benchmark.cjs",
+    "browsers:install": "playwright install chromium firefox webkit"
+  },
   "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-compress": "^1.4.1",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-connect": "^1.0.2",
-    "grunt-contrib-jasmine": "^1.1.0",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "^2.1.0",
-    "grunt-contrib-watch": "^1.0.0"
+    "esbuild": "0.28.2",
+    "playwright": "1.65.1"
   }
 }
