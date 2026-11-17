@@ -7,13 +7,12 @@ const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
 const playwright = require('playwright');
 const root = path.resolve(__dirname, '..');
-const legacy = process.env.VMASK_LEGACY === '1';
-const code = fs.readFileSync(path.join(root, legacy ? 'gpt-vmask.txt' : 'dist/vmask.min.js'), 'utf8');
+const code = fs.readFileSync(path.join(root, 'dist/vmask.min.js'), 'utf8');
 const engines = (process.env.VMASK_BROWSERS || 'chromium,firefox,webkit').split(',');
 
 (async () => {
   for (const engine of engines) {
-    await test(`browser: ${engine}${legacy ? ' (legacy regression baseline)' : ''}`, async (t) => {
+    await test(`browser: ${engine}`, async (t) => {
       const browser = await playwright[engine].launch({ headless: true });
       const context = await browser.newContext();
       const page = await context.newPage();
@@ -336,31 +335,29 @@ const engines = (process.env.VMASK_BROWSERS || 'chromium,firefox,webkit').split(
           await page.keyboard.insertText('R2 56,78 kg2');
           assert.equal(await page.locator('#field').inputValue(), 'R2 56,78 kg2');
         });
-        if (!legacy) {
-          await t.test('demo loads from disk and has a working verification button', async () => {
-            errors.length = 0;
-            await page.goto(pathToFileURL(path.join(root, 'index.html')).href);
-            await page.locator('#cpf').fill('12345678901');
-            assert.equal(await page.locator('#cpf').inputValue(), '123.456.789-01');
-            await page.getByRole('button', { name: 'Executar testes' }).click();
-            assert.match(await page.locator('#manual-result').innerText(), /Todos os \d+ testes passaram/);
-            assert.deepEqual(errors, []);
-            await page.setViewportSize({ width: 375, height: 812 });
-            assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+        await t.test('demo loads from disk and has a working verification button', async () => {
+          errors.length = 0;
+          await page.goto(pathToFileURL(path.join(root, 'index.html')).href);
+          await page.locator('#cpf').fill('12345678901');
+          assert.equal(await page.locator('#cpf').inputValue(), '123.456.789-01');
+          await page.getByRole('button', { name: 'Executar testes' }).click();
+          assert.match(await page.locator('#manual-result').innerText(), /Todos os \d+ testes passaram/);
+          assert.deepEqual(errors, []);
+          await page.setViewportSize({ width: 375, height: 812 });
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+        });
+        if (engine !== 'firefox') {
+          await t.test('mobile emulation accepts touch focus and phone input', async () => {
+            const mobile = await browser.newContext({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+            try {
+              const mobilePage = await mobile.newPage();
+              await mobilePage.goto(pathToFileURL(path.join(root, 'index.html')).href);
+              await mobilePage.locator('#phone').tap();
+              await mobilePage.locator('#phone').fill('11912345678');
+              assert.equal(await mobilePage.locator('#phone').inputValue(), '(11) 91234-5678');
+              assert.equal(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+            } finally { await mobile.close(); }
           });
-          if (engine !== 'firefox') {
-            await t.test('mobile emulation accepts touch focus and phone input', async () => {
-              const mobile = await browser.newContext({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
-              try {
-                const mobilePage = await mobile.newPage();
-                await mobilePage.goto(pathToFileURL(path.join(root, 'index.html')).href);
-                await mobilePage.locator('#phone').tap();
-                await mobilePage.locator('#phone').fill('11912345678');
-                assert.equal(await mobilePage.locator('#phone').inputValue(), '(11) 91234-5678');
-                assert.equal(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-              } finally { await mobile.close(); }
-            });
-          }
         }
       } finally { await browser.close(); }
     });

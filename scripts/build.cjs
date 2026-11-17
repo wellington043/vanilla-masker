@@ -6,7 +6,7 @@ const { gzipSync } = require('node:zlib');
 const esbuild = require('esbuild');
 const root = path.resolve(__dirname, '..');
 const { version } = require('../package.json');
-const banner = `/*! VMasker Refined ${version} | Derived from VanillaMasker | MIT license: see LICENSE */`;
+const banner = `/*! VanillaMasker Modern ${version} | Derived from VanillaMasker | MIT license: see LICENSE */`;
 
 const common = {
   absWorkingDir: root,
@@ -39,4 +39,4 @@ const compressed = gzipSync(minified, { level: 9 });
 // RFC 1952 permits OS=255 (unknown), making this metadata identical on Windows/Linux.
 compressed[9] = 255;
 fs.writeFileSync(path.join(root, 'build', 'vanilla-masker.min.js.gz'), compressed);
-console.log(`Built VMasker Refined ${version}: UMD, minified UMD, CommonJS, ESM and legacy distribution paths.`);
+console.log(`Built VanillaMasker Modern ${version}: UMD, minified UMD, CommonJS, ESM and legacy distribution paths.`);

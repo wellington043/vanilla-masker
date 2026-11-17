@@ -1,21 +1,8 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const { readFileSync } = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
-const vm = require('node:vm');
-
-const runAgainstLegacy = process.env.VMASK_LEGACY === '1';
-let formatters;
-if (runAgainstLegacy) {
-  const filename = path.join(__dirname, '..', 'gpt-vmask.txt');
-  const context = {};
-  vm.runInNewContext(readFileSync(filename, 'utf8'), context, { filename });
-  formatters = context.VMasker;
-} else {
-  formatters = require('../src/formatters.js');
-}
+const formatters = require('../src/formatters.js');
 
 const { toMoney, toPattern, toNumber, toAlphaNumeric } = formatters;
 
@@ -211,23 +198,21 @@ test('zeroCents uses the last output only to account for deleting synthetic cent
   assert.equal(toMoney(lastOutput, options), lastOutput);
 });
 
-if (!runAgainstLegacy) {
-  test('uses prepared money options with no writes to the supplied object', () => {
-    const options = { unit: 'XP2', suffixUnit: '4º', zeroCents: true };
-    const prepared = Object.freeze({
-      ...formatters.prepareMoneyOptions(options), lastOutput: 'XP2 12,00 4º',
-    });
-    options.unit = 'new';
-
-    assert.equal(formatters.formatMoney('XP2 12,0 4º', prepared), 'XP2 1,00 4º');
-    assert.equal(formatters.formatMoney('146', prepared), 'XP2 146,00 4º');
-    assert.equal(prepared.lastOutput, 'XP2 12,00 4º');
+test('uses prepared money options with no writes to the supplied object', () => {
+  const options = { unit: 'XP2', suffixUnit: '4º', zeroCents: true };
+  const prepared = Object.freeze({
+    ...formatters.prepareMoneyOptions(options), lastOutput: 'XP2 12,00 4º',
   });
+  options.unit = 'new';
 
-  test('normalizes strings, ordinary numbers and empty inputs for consumers', () => {
-    assert.equal(formatters.normalizeValue(' 0123 '), ' 0123 ');
-    assert.equal(formatters.normalizeValue(-12.3), '-12.3');
-    assert.equal(formatters.normalizeValue(null), '');
-    assert.equal(formatters.normalizeValue(undefined), '');
-  });
-}
+  assert.equal(formatters.formatMoney('XP2 12,0 4º', prepared), 'XP2 1,00 4º');
+  assert.equal(formatters.formatMoney('146', prepared), 'XP2 146,00 4º');
+  assert.equal(prepared.lastOutput, 'XP2 12,00 4º');
+});
+
+test('normalizes strings, ordinary numbers and empty inputs for consumers', () => {
+  assert.equal(formatters.normalizeValue(' 0123 '), ' 0123 ');
+  assert.equal(formatters.normalizeValue(-12.3), '-12.3');
+  assert.equal(formatters.normalizeValue(null), '');
+  assert.equal(formatters.normalizeValue(undefined), '');
+});

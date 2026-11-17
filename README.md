@@ -1,8 +1,28 @@
-# VMasker Refined 2.0.0
+# VanillaMasker Modern 2.0.0
 
-Fork do [VanillaMasker](https://github.com/vanilla-masker/vanilla-masker) mantido em [wellington043/vanilla-masker](https://github.com/wellington043/vanilla-masker), para formatar valores e campos de texto em navegadores atuais. A biblioteca roda sem dependências em tempo de execução. As distribuições estão no repositório e nas [releases](https://github.com/wellington043/vanilla-masker/releases). `"private": true` impede publicação acidental no npm; não significa que este repositório seja privado.
+Fork do [VanillaMasker](https://github.com/vanilla-masker/vanilla-masker) mantido em [wellington043/vanilla-masker](https://github.com/wellington043/vanilla-masker), para formatar valores e campos de texto em navegadores atuais. A biblioteca roda sem dependências em tempo de execução. As distribuições estão no repositório e nas [releases](https://github.com/wellington043/vanilla-masker/releases).
 
 [![CI](https://github.com/wellington043/vanilla-masker/actions/workflows/ci.yml/badge.svg)](https://github.com/wellington043/vanilla-masker/actions/workflows/ci.yml)
+
+[Experimente a demonstração online](https://wellington043.github.io/vanilla-masker/).
+
+## Instalação pelo npm
+
+O pacote está preparado como `vanilla-masker-modern`, versão `2.0.0`. A primeira publicação no registro npm ainda está pendente. Após a publicação:
+
+```sh
+npm install vanilla-masker-modern
+```
+
+```js
+// ESM
+import VMasker from 'vanilla-masker-modern';
+```
+
+```js
+// CommonJS (alternativa)
+const VMasker = require('vanilla-masker-modern');
+```
 
 ## Uso no navegador
 
@@ -67,7 +87,7 @@ Padrões usam `9` para dígitos ASCII, `A` para letras ASCII e `S` para ambos. O
 
 ## Migração
 
-- Esta é uma versão major em relação ao upstream 1.2.0. Requer navegadores atuais; Internet Explorer não é suportado. Os fluxos Grunt, Travis, Bower e Meteor legados foram retirados. O histórico upstream foi preservado no Git e no [changelog original](docs/UPSTREAM_CHANGELOG.md).
+- Esta é uma versão major em relação ao upstream 1.2.0. Requer navegadores atuais; Internet Explorer não é suportado. Os fluxos Grunt, Travis, Bower e Meteor legados foram retirados. O histórico upstream foi preservado no Git.
 - O vínculo usa eventos `input` e preserva os handlers da aplicação. Para reformatar imediatamente após atribuir `campo.value` via JavaScript, dispare `campo.dispatchEvent(new Event('input', { bubbles: true }))`.
 - `toMoney` usa uma sequência de dígitos: `'1,2'` com duas casas produz `'0,12'`, não interpreta a string como uma quantia decimal. Normalize os valores na aplicação quando precisar dessa conversão.
 - `null` e `undefined` são tratados como entrada vazia. `toMoney(null)` retorna `'0,00'` com as opções padrão. Ao apagar um campo vinculado à máscara monetária, ele fica vazio.
@@ -92,9 +112,23 @@ npm run benchmark
 
 `npm test` executa testes Node dos formatadores e da distribuição. `npm run test:browser` cobre a integração no Chromium, Firefox e WebKit com Playwright. `npm run check` executa as duas suítes. A cobertura móvel usa emulação. Aparelhos físicos ainda não foram validados.
 
-Depois de gerar o bundle, `npm run benchmark` compara as funções puras da distribuição minificada com as três versões históricas. O resultado inclui medianas do tempo de rodadas no Node, tamanho bruto e tamanho com gzip. Os tempos dependem do ambiente e dos exemplos escolhidos. O benchmark mede apenas chamadas aos formatadores e serve como referência para essa carga de trabalho.
+Depois de gerar o bundle, `npm run benchmark` mede os quatro formatadores da distribuição minificada atual. O resultado inclui medianas do tempo de rodadas no Node, tamanho bruto e tamanho com gzip. Os tempos dependem do ambiente e dos exemplos escolhidos. O benchmark mede apenas chamadas aos formatadores e serve como referência para essa carga de trabalho.
 
-`vmask.txt`, `minify-vmask.txt` e `gpt-vmask.txt` são registros históricos usados pelo benchmark. O fork parte da refatoração de `gpt-vmask.txt`, consolidada com a API do upstream.
+`npm run build:pages` prepara apenas a demonstração, seu bundle e a licença em `output/pages/`. O CI publica essa pasta no GitHub Pages após os testes passarem em `master`.
+
+### Publicação no npm
+
+Na primeira publicação, use uma conta npm com e-mail verificado e autenticação de dois fatores. Execute na raiz deste repositório:
+
+```sh
+npm ci
+npm run browsers:install
+npm pack --dry-run
+npm login --registry=https://registry.npmjs.org/
+npm publish
+```
+
+`prepack` gera os bundles e `prepublishOnly` executa as suítes Node e navegador antes da publicação. A lista `files` limita o pacote às distribuições, fontes, README, changelog e licença. Depois da primeira publicação, retire o aviso de pendência desta seção de instalação. Cada nova versão publicada precisa de um número ainda não utilizado no npm.
 
 ## Licença
 

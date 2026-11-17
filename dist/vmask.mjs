@@ -1,4 +1,4 @@
-/*! VMasker Refined 2.0.0 | Derived from VanillaMasker | MIT license: see LICENSE */
+/*! VanillaMasker Modern 2.0.0 | Derived from VanillaMasker | MIT license: see LICENSE */
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __commonJS = (cb, mod) => function __require() {
   try {

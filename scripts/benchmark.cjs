@@ -30,6 +30,12 @@ const workloads = {
     [['0-123-456-7890'], '01234567890'],
     [['0001'], '0001'],
   ],
+  toAlphaNumeric: [
+    [['AB-123'], 'AB123'],
+    [['A_b  09-é\tZ'], 'Ab  09Z'],
+    [['abc 123'], 'abc 123'],
+    [['!@#'], ''],
+  ],
   toPattern: [
     [['12345678901', '999.999.999-99'], '123.456.789-01'],
     [['12345678000190', '99.999.999/9999-99'], '12.345.678/0001-90'],
@@ -38,18 +44,11 @@ const workloads = {
   ],
 };
 
-const variants = ['vmask.txt', 'minify-vmask.txt', 'gpt-vmask.txt', builtFile].map(filename => {
-  const source = fs.readFileSync(path.join(root, filename));
-  const context = {};
-  vm.runInNewContext(source.toString('utf8'), context, { filename });
-  return {
-    filename,
-    api: context.VMasker,
-    bytes: source.length,
-    gzipBytes: gzipSync(source, { level: 9 }).length,
-    medians: {},
-  };
-});
+const source = fs.readFileSync(path.join(root, builtFile));
+const context = {};
+vm.runInNewContext(source.toString('utf8'), context, { filename: builtFile });
+const api = context.VMasker;
+const medians = {};
 
 function exercise(format, cases, calls) {
   let totalLength = 0;
@@ -60,39 +59,32 @@ function exercise(format, cases, calls) {
 }
 
 for (const [method, cases] of Object.entries(workloads)) {
-  const measurements = variants.map(() => []);
-  for (const { api, filename } of variants) {
-    for (const [args, expected] of cases) {
-      assert.equal(api[method](...args), expected, `${filename}: ${method}`);
-    }
-    exercise(api[method], cases, callsPerRound);
+  const format = api[method];
+  for (const [args, expected] of cases) {
+    assert.equal(format(...args), expected, `${builtFile}: ${method}`);
   }
+  exercise(format, cases, callsPerRound);
 
   const expectedLength = cases.reduce((sum, [, expected]) => sum + expected.length, 0)
     * callsPerRound / cases.length;
+  const measurements = [];
   for (let round = 0; round < rounds; round++) {
-    for (let offset = 0; offset < variants.length; offset++) {
-      const index = (round + offset) % variants.length;
-      const format = variants[index].api[method];
-      const start = performance.now();
-      const totalLength = exercise(format, cases, callsPerRound);
-      measurements[index].push(performance.now() - start);
-      assert.equal(totalLength, expectedLength);
-    }
+    const start = performance.now();
+    const totalLength = exercise(format, cases, callsPerRound);
+    measurements.push(performance.now() - start);
+    assert.equal(totalLength, expectedLength);
   }
 
-  measurements.forEach((times, index) => {
-    times.sort((a, b) => a - b);
-    variants[index].medians[`${method} (ms)`] = times[Math.floor(times.length / 2)].toFixed(3);
-  });
+  measurements.sort((a, b) => a - b);
+  medians[`${method} (ms)`] = measurements[Math.floor(measurements.length / 2)].toFixed(3);
 }
 
 console.log(`Node ${process.version} | ${process.platform} ${process.arch}`);
-console.log(`Mediana de ${rounds} rodadas com ${callsPerRound} chamadas por função e arquivo.`);
-console.table(variants.map(({ filename, bytes, gzipBytes, medians }) => ({
-  arquivo: filename,
-  bytes,
-  'gzip (bytes)': gzipBytes,
+console.log(`Mediana de ${rounds} rodadas com ${callsPerRound} chamadas por função.`);
+console.table([{
+  arquivo: builtFile,
+  bytes: source.length,
+  'gzip (bytes)': gzipSync(source, { level: 9 }).length,
   ...medians,
-})));
+}]);
 console.log('Resultados restritos aos exemplos acima e ao ambiente local. Carregamento e eventos do DOM ficam fora da medição.');

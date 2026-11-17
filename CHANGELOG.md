@@ -1,5 +1,11 @@
 # Changelog
 
+## Não lançado
+
+- Nome npm preparado como `vanilla-masker-modern`, mantendo a versão inicial `2.0.0` e a API global `VMasker`.
+- Demonstração publicada via GitHub Pages após o CI, com apenas os arquivos necessários ao site.
+- Removidos arquivos `.txt`, relatórios históricos duplicados e redirecionamento antigo; testes e benchmark usam a implementação atual. Os arquivos anteriores continuam no histórico Git.
+
 ## 2.0.0 — 2026-11-17
 
 Primeira versão publicada deste fork, sucedendo a base upstream 1.2.0. A versão 1.0.0 Refined foi um marco local anterior à integração com o histórico upstream.
@@ -23,4 +29,4 @@ Primeira versão publicada deste fork, sucedendo a base upstream 1.2.0. A versã
 - Máscaras monetárias usam dígitos, não fazem parsing de quantias decimais. A API do DOM passa a usar input/composição e preserva listeners da aplicação.
 - unMask preserva letras/dígitos/sinais úteis; placeholders que poderiam ser confundidos com dados são rejeitados.
 
-O [changelog upstream até 1.2.0](docs/UPSTREAM_CHANGELOG.md) e os commits anteriores permanecem disponíveis.
+O changelog upstream até 1.2.0 e os commits anteriores permanecem disponíveis no histórico Git.
