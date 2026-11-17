@@ -9,7 +9,7 @@ const output = path.join(root, 'output', 'pages');
 const relative = path.relative(root, output);
 if (relative !== path.join('output', 'pages')) throw new Error('Unexpected Pages output path');
 fs.rmSync(output, { recursive: true, force: true });
-for (const filename of ['index.html', 'demo.js', 'dist/vmask.min.js', 'LICENSE']) {
+for (const filename of ['index.html', 'styles.css', 'demo.js', 'dist/vmask.min.js', 'LICENSE', 'assets/favicon.svg', 'assets/fonts/manrope-latin.woff2', 'assets/fonts/OFL']) {
   const destination = path.join(output, filename);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   fs.copyFileSync(path.join(root, filename), destination);

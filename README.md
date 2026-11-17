@@ -8,7 +8,7 @@ Fork do [VanillaMasker](https://github.com/vanilla-masker/vanilla-masker) mantid
 
 ## Instalação pelo npm
 
-O pacote está preparado como `vanilla-masker-modern`, versão `2.0.0`. A primeira publicação no registro npm ainda está pendente. Após a publicação:
+Disponível no npm como [`vanilla-masker-modern`](https://www.npmjs.com/package/vanilla-masker-modern).
 
 ```sh
 npm install vanilla-masker-modern
@@ -37,7 +37,7 @@ O único arquivo JavaScript necessário em produção para uso como script globa
 </script>
 ```
 
-Depois do build, abra [index.html](index.html) diretamente no navegador. A demonstração carrega o bundle por caminho relativo e o botão **Executar testes** compara as saídas dos formatadores com valores esperados.
+Depois do build, abra [index.html](index.html) diretamente no navegador. A demonstração carrega o bundle por caminho relativo, permite trocar máscaras, filtrar exemplos e copiar código. O botão **Executar testes** compara as saídas dos formatadores com valores esperados. A opção **Script** na instalação usa o CDN com versão fixa.
 
 Para importação local, use o artefato do seu módulo.
 
@@ -114,11 +114,11 @@ npm run benchmark
 
 Depois de gerar o bundle, `npm run benchmark` mede os quatro formatadores da distribuição minificada atual. O resultado inclui medianas do tempo de rodadas no Node, tamanho bruto e tamanho com gzip. Os tempos dependem do ambiente e dos exemplos escolhidos. O benchmark mede apenas chamadas aos formatadores e serve como referência para essa carga de trabalho.
 
-`npm run build:pages` prepara apenas a demonstração, seu bundle e a licença em `output/pages/`. O CI publica essa pasta no GitHub Pages após os testes passarem em `master`.
+`npm run build:pages` prepara a demonstração, CSS, fonte local, bundle e licenças em `output/pages/`. O CI publica essa pasta no GitHub Pages após os testes passarem em `master`.
 
 ### Publicação no npm
 
-Na primeira publicação, use uma conta npm com e-mail verificado e autenticação de dois fatores. Execute na raiz deste repositório:
+Para publicar uma nova versão, use uma conta npm autorizada no pacote, com e-mail verificado e autenticação de dois fatores. Execute na raiz deste repositório:
 
 ```sh
 npm ci
@@ -128,8 +128,10 @@ npm login --registry=https://registry.npmjs.org/
 npm publish
 ```
 
-`prepack` gera os bundles e `prepublishOnly` executa as suítes Node e navegador antes da publicação. A lista `files` limita o pacote às distribuições, fontes, README, changelog e licença. Depois da primeira publicação, retire o aviso de pendência desta seção de instalação. Cada nova versão publicada precisa de um número ainda não utilizado no npm.
+`prepack` gera os bundles e `prepublishOnly` executa as suítes Node e navegador antes da publicação. A lista `files` limita o pacote às distribuições, fontes, README, changelog e licença. Cada nova versão publicada precisa de um número ainda não utilizado no npm.
 
 ## Licença
 
 MIT. O VanillaMasker original é atribuído à BankFacil, Caio Ribeiro Pereira, Leandro Alvares da Costa e demais colaboradores. [Licença](LICENSE) · [Projeto original](https://github.com/vanilla-masker/vanilla-masker)
+
+A demonstração usa a fonte Manrope, distribuída sob SIL Open Font License. A licença da fonte acompanha os arquivos em `assets/fonts/OFL`.

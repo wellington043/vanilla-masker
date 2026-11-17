@@ -1,8 +1,9 @@
 # Changelog
 
-## Não lançado
+## Site e distribuição — 2026-11-17
 
-- Nome npm preparado como `vanilla-masker-modern`, mantendo a versão inicial `2.0.0` e a API global `VMasker`.
+- Publicado no npm como `vanilla-masker-modern@2.0.0`, mantendo a API global `VMasker`.
+- Novo site com tema escuro e verde-lima, máscaras interativas, filtros, código copiável, exemplos de instalação e resumo da API. Layout responsivo, fonte local e navegação por teclado.
 - Demonstração publicada via GitHub Pages após o CI, com apenas os arquivos necessários ao site.
 - Removidos arquivos `.txt`, relatórios históricos duplicados e redirecionamento antigo; testes e benchmark usam a implementação atual. Os arquivos anteriores continuam no histórico Git.
 
